@@ -3,22 +3,15 @@
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-define(function (route) {
-    var hash = route.parameters;
-    switch (hash[0]) {
-        case '0':
-        case '1':
-        case '2':
-            modular(hash[0]);
-            break;
-        case 'post':
-            post(hash[1]);
-            break;
-        default:
-            modular();
-            break;
-    }
-})
+define(function(route) {
+    var hash = route.param;
+    //when(modular,fn,param);
+    //other(fm,param);
+    route
+        .when(['0', '1', '2'], modular, [route.modular])
+        .when('post', post, [hash[1]])
+        .other(modular, [0]);
+});
 
 function modular(now) {
     var nav = document.getElementById('n').children;
@@ -37,14 +30,14 @@ function modular(now) {
 
     var list = document.getElementById('list');
     var data = SimulationData['list'];
-    list.innerHTML = "";
+    list.innerHTML = '';
     for (var i = 0, t; t = data[i]; i++) {
         if (t.mid == now) {
             list.innerHTML += '<div class="blog-post">' +
-              '<h2 class="blog-post-title"><a href="#!post/' + t.id + '">' + t.title + '</a></h2>' +
-              '<p class="blog-post-meta">' + t.date + '<a href=>' + t.author + '</a></p>' +
-              '<p>' + t.depiction + '</p>' +
-              '</div>';
+                '<h2 class="blog-post-title"><a href="#!post/' + t.id + '">' + t.title + '</a></h2>' +
+                '<p class="blog-post-meta">' + t.date + '<a href="#">' + t.author + '</a></p>' +
+                '<p>' + t.depiction + '</p>' +
+                '</div>';
         }
     }
 }
@@ -59,10 +52,10 @@ function post(now) {
     for (var i = 0, t; t = data[i]; i++) {
         if (t.tid == now) {
             list.innerHTML += '<div class="blog-post">' +
-              '<h2 class="blog-post-title"><a href="#!post/' + t.id + '">' + t.title + '</a></h2>' +
-              '<p class="blog-post-meta">' + t.date + '<a href=>' + t.author + '</a></p>' +
-              '<p>' + t.value + '</p>' +
-              '</div>';
+                '<h2 class="blog-post-title"><a href="#!post/' + t.id + '">' + t.title + '</a></h2>' +
+                '<p class="blog-post-meta">' + t.date + '<a href="#">' + t.author + '</a></p>' +
+                '<p>' + t.value + '</p>' +
+                '</div>';
 
             about.innerHTML = t.title;
             isOn = true;
@@ -70,15 +63,15 @@ function post(now) {
     }
     if (!isOn) {
         list.innerHTML += '<div class="blog-post">' +
-        '<h4>不好意思，数据库数据有些没完善.</h4>' +
-        '</div>';
+            '<h4>不好意思，数据库数据有些没完善.</h4>' +
+            '</div>';
     }
     list.innerHTML += ['<nav>',
-      '<ul class="pager">',
-      '<li><a href="#!post/' + (!parseInt(now) ? parseInt(now) : parseInt(now) - 1) + '">Previous</a></li>',
-      '<li><a href="#!post/' + (parseInt(now) + 1) + '">Next</a></li>',
-      '</ul>',
-      '</nav>'
+        '<ul class="pager">',
+        '<li><a href="#!post/' + (!parseInt(now) ? parseInt(now) : parseInt(now) - 1) + '">Previous</a></li>',
+        '<li><a href="#!post/' + (parseInt(now) + 1) + '">Next</a></li>',
+        '</ul>',
+        '</nav>'
     ].join('');
     window.scrollTo(0, 0);
 }
